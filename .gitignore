@@ -2,8 +2,11 @@ backend/.env
 api_key.txt
 __pycache__/
 *.pyc
+*.pyo
 backend/data/chroma/
+backend/data/models/
 .DS_Store
-*.egg-info/
 venv/
 .venv/
+backend/venv/
+*.log

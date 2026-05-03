@@ -1,48 +1,69 @@
 #!/bin/bash
 
-echo "🚀 Starting Quip — FinoLens AI Analyst"
-echo "======================================="
+# ─────────────────────────────────────────
+#   QUIP — FinoLens AI Analyst
+# ─────────────────────────────────────────
 
-# Check if .env exists
+clear
+echo ""
+echo "  ██████╗ ██╗   ██╗██╗██████╗ "
+echo "  ██╔═══██╗██║   ██║██║██╔══██╗"
+echo "  ██║   ██║██║   ██║██║██████╔╝"
+echo "  ██║▄▄ ██║██║   ██║██║██╔═══╝ "
+echo "  ╚██████╔╝╚██████╔╝██║██║     "
+echo "   ╚══▀▀═╝  ╚═════╝ ╚═╝╚═╝     "
+echo ""
+echo "  FinoLens AI Analyst — by Nagul"
+echo "  ─────────────────────────────"
+echo ""
+
+# Kill anything running on port 8000
+echo "  ⚡ Checking port 8000..."
+PID=$(lsof -ti:8000)
+if [ ! -z "$PID" ]; then
+  echo "  🔴 Killing existing process on port 8000 (PID: $PID)"
+  kill -9 $PID
+  sleep 1
+fi
+echo "  ✅ Port 8000 is free"
+echo ""
+
+# Check .env
 if [ ! -f backend/.env ]; then
-  echo "❌ Error: backend/.env not found. Copy .env.example and fill in your API keys."
+  echo "  ❌ backend/.env not found!"
+  echo "  Copy backend/.env.example and fill in your API keys."
   exit 1
 fi
+echo "  ✅ Environment config found"
 
-# Check if Redis is running, start if not
+# Start Redis if not running
+echo "  ⚡ Checking Redis..."
 if ! pgrep -x "redis-server" > /dev/null; then
-  echo "⚡ Starting Redis..."
-  redis-server --daemonize yes
+  echo "  🔄 Starting Redis..."
+  redis-server --daemonize yes 2>/dev/null
+  sleep 1
 fi
+echo "  ✅ Redis is running"
+echo ""
 
-# Install dependencies if needed
-if [ ! -d "backend/venv" ]; then
-  echo "📦 Creating virtual environment..."
-  python3 -m venv backend/venv
-  source backend/venv/bin/activate
-  pip install -r backend/requirements.txt
+# Resolve venv uvicorn — prefer venv over system to ensure correct packages
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+UVICORN=""
+if [ -f "$SCRIPT_DIR/backend/venv/bin/uvicorn" ]; then
+  UVICORN="$SCRIPT_DIR/backend/venv/bin/uvicorn"
+  echo "  ✅ Virtual environment activated (backend/venv)"
+elif [ -f "$SCRIPT_DIR/venv/bin/uvicorn" ]; then
+  UVICORN="$SCRIPT_DIR/venv/bin/uvicorn"
+  echo "  ✅ Virtual environment activated (venv)"
 else
-  source backend/venv/bin/activate
+  UVICORN="uvicorn"
+  echo "  ⚠️  No project venv found — using system uvicorn"
 fi
 
-# Start FastAPI backend
-echo "🔧 Starting Quip backend on http://localhost:8000"
-cd backend
-uvicorn main:app --reload --port 8000 &
-BACKEND_PID=$!
-cd ..
-
-# Open frontend
-echo "🌐 Opening Quip frontend..."
-sleep 2
-xdg-open frontend/code.html 2>/dev/null || open frontend/code.html 2>/dev/null
-
 echo ""
-echo "✅ Quip is running!"
-echo "   Backend API  → http://localhost:8000"
-echo "   Health check → http://localhost:8000/health"
-echo "   Docs         → http://localhost:8000/docs"
+echo "  🚀 Starting Quip backend..."
+echo "  ─────────────────────────"
 echo ""
-echo "Press Ctrl+C to stop."
 
-wait $BACKEND_PID
+cd "$SCRIPT_DIR/backend"
+$UVICORN main:app --reload --port 8000 --host 0.0.0.0
