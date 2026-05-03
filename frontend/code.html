@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quip - Financial AI Analyst</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#e5e2dc",
+                        "secondary-container": "#42493d",
+                        "on-surface": "#e5e2dc",
+                        "tertiary": "#e6d1b8",
+                        "secondary-fixed-dim": "#c2c9b9",
+                        "surface-container-highest": "#353531",
+                        "on-tertiary": "#3b2e1d",
+                        "surface-container-high": "#2a2a26",
+                        "primary-container": "#c8b882",
+                        "surface-dim": "#131410",
+                        "surface-container": "#20201c",
+                        "primary-fixed-dim": "#d6c68f",
+                        "primary-fixed": "#f3e2a9",
+                        "error-container": "#93000a",
+                        "secondary": "#c2c9b9",
+                        "on-secondary-container": "#b1b7a8",
+                        "on-secondary-fixed-variant": "#42493d",
+                        "surface-tint": "#d6c68f",
+                        "on-primary": "#393006",
+                        "on-tertiary-fixed-variant": "#524532",
+                        "secondary-fixed": "#dee5d4",
+                        "surface-container-lowest": "#0e0e0b",
+                        "inverse-surface": "#e5e2dc",
+                        "outline": "#969082",
+                        "tertiary-container": "#c9b69e",
+                        "surface": "#131410",
+                        "error": "#ffb4ab",
+                        "on-surface-variant": "#cdc6b7",
+                        "surface-variant": "#353531",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#241a0a",
+                        "primary": "#e5d49b",
+                        "tertiary-fixed-dim": "#d8c3ab",
+                        "outline-variant": "#4b463b",
+                        "on-primary-fixed": "#221b00",
+                        "inverse-primary": "#6a5e30",
+                        "on-primary-container": "#54481d",
+                        "surface-container-low": "#1c1c18",
+                        "tertiary-fixed": "#f5dfc6",
+                        "inverse-on-surface": "#31312d",
+                        "on-tertiary-container": "#554734",
+                        "on-secondary-fixed": "#171d13",
+                        "background": "#131410",
+                        "surface-bright": "#3a3935",
+                        "on-secondary": "#2c3227",
+                        "on-primary-fixed-variant": "#51461b",
+                        "on-error": "#690005"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "unit": "4px",
+                        "gutter": "24px",
+                        "margin": "40px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Manrope"],
+                        "label-caps": ["Manrope"],
+                        "body-lg": ["Manrope"],
+                        "headline-md": ["Noto Serif"],
+                        "headline-sm": ["Noto Serif"],
+                        "display-lg": ["Noto Serif"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-md": ["32px", {"lineHeight": "1.2", "fontWeight": "400"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.3", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .noise-bg {
+            position: relative;
+        }
+        .noise-bg::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+        .radial-mesh {
+            background: radial-gradient(circle at 30% 20%, #141a10 0%, #131410 50%),
+                        radial-gradient(circle at 80% 80%, #2a1f0f 0%, #131410 60%);
+        }
+        .stagger-1 { animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; opacity: 0; transform: translateY(20px); animation-delay: 0.1s; }
+        .stagger-2 { animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; opacity: 0; transform: translateY(20px); animation-delay: 0.12s; }
+        .stagger-3 { animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; opacity: 0; transform: translateY(20px); animation-delay: 0.14s; }
+        .stagger-4 { animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; opacity: 0; transform: translateY(20px); animation-delay: 0.16s; }
+        .stagger-5 { animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; opacity: 0; transform: translateY(20px); animation-delay: 0.18s; }
+        
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased min-h-screen flex flex-col noise-bg">
+<!-- TopNavBar -->
+<header class="bg-[#061612]/80 backdrop-blur-2xl text-[#c8b882] font-serif tracking-tight docked full-width top-0 z-50 border-b border-[#c8b882]/20 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-contrast-125 sticky">
+<div class="flex justify-between items-center px-10 py-4 w-full max-w-[1440px] mx-auto">
+<div class="text-2xl font-bold text-[#c8b882] italic">
+                Quip
+            </div>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="text-[#c8b882] border-b border-[#c8b882] pb-1 hover:text-[#c8b882] hover:opacity-80 transition-all duration-300" href="#">New Chat</a>
+<a class="text-stone-400 font-medium hover:text-[#c8b882] hover:opacity-80 transition-all duration-300" href="#">Notifications</a>
+<a class="text-stone-400 font-medium hover:text-[#c8b882] hover:opacity-80 transition-all duration-300" href="#">Community</a>
+</nav>
+<div class="flex items-center gap-4">
+<span class="text-sm hidden sm:block">Nagul</span>
+<span class="material-symbols-outlined hover:text-[#c8b882] hover:opacity-80 transition-all duration-300 cursor-pointer">account_circle</span>
+</div>
+</div>
+</header>
+<main class="flex-grow flex flex-col relative z-10">
+<!-- Section 1 - Market News (The "Cream" Surface) -->
+<section class="w-full bg-[#f7f4ee] text-on-primary shadow-[0_0_60px_rgba(0,0,0,0.15)] relative z-20 pb-24 pt-16 stagger-1">
+<div class="max-w-container-max mx-auto px-margin">
+<h1 class="font-display-lg text-display-lg text-center mb-12 text-[#1a2318]">Market News</h1>
+<!-- Search & Filters -->
+<div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-12 border-b border-black/10 pb-4 stagger-2">
+<div class="w-full md:w-1/2 relative">
+<span class="material-symbols-outlined absolute left-0 bottom-2 text-outline">search</span>
+<input class="w-full bg-transparent border-none border-b border-outline/30 focus:ring-0 focus:border-primary-container pl-8 pb-2 text-on-primary placeholder:text-outline/70 font-body-lg text-body-lg transition-colors" placeholder="Search markets, companies, or trends..." type="text"/>
+</div>
+<div class="w-full md:w-auto relative">
+<select class="appearance-none bg-transparent border-none border-b border-outline/30 focus:ring-0 focus:border-primary-container pb-2 pr-8 text-on-primary font-body-md text-body-md cursor-pointer transition-colors">
+<option>Past 24 Hours</option>
+<option>Past Week</option>
+<option>Past Month</option>
+</select>
+<span class="material-symbols-outlined absolute right-0 bottom-2 text-outline pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- News Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter stagger-3" id="news-grid">
+<!-- Cards injected by JS -->
+<div class="col-span-3 text-center text-outline py-16 text-body-md" id="news-loading">
+  Loading market news…
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2 - Chat Interface (Dark Radial Mesh) -->
+<section class="flex-grow w-full radial-mesh flex flex-col items-center justify-center py-24 relative z-10 px-6 stagger-4">
+<div class="text-center mb-12 flex flex-col items-center gap-4 w-full max-w-3xl">
+<span class="font-label-caps text-label-caps text-primary-container border border-primary-container/30 px-3 py-1 rounded-full backdrop-blur-sm">FINOLENS AI</span>
+<h2 class="font-display-lg text-display-lg text-[#f7f4ee] italic" id="greeting-heading">Good Morning</h2>
+<p class="font-body-lg text-body-lg text-primary-container/80" id="greeting-sub">How are you?</p>
+</div>
+<!-- Chat Input Component -->
+<div class="w-full max-w-[600px] bg-surface-container-high/40 backdrop-blur-[30px] border border-outline/20 rounded-xl p-4 shadow-[inset_0_0_0_1px_rgba(200,184,130,0.05)] transition-all duration-300 focus-within:border-primary-container/50 focus-within:shadow-[inset_0_0_0_1px_rgba(200,184,130,0.2)] group stagger-5">
+<textarea class="w-full bg-transparent border-none text-on-surface font-body-md text-body-md placeholder:text-on-surface-variant/50 focus:ring-0 resize-none min-h-[80px]" id="chat-input" placeholder="Ask about market trends, portfolio analysis, or specific equities..." rows="3"></textarea>
+<div class="flex justify-between items-end mt-2 pt-2 border-t border-outline/10">
+<div class="flex gap-2">
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-bright/50 border border-outline/20 text-on-surface-variant font-label-caps text-label-caps hover:bg-surface-bright hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined text-[16px]">attach_file</span>
+                            Attach
+                        </button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-bright/50 border border-outline/20 text-on-surface-variant font-label-caps text-label-caps hover:bg-surface-bright hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined text-[16px]">psychology</span>
+                            Deep Thinking
+                        </button>
+</div>
+<button class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-surface-dim hover:bg-primary hover:scale-105 transition-all duration-300 shadow-sm" id="chat-send">
+<span class="material-symbols-outlined font-bold" id="chat-send-icon">arrow_upward</span>
+</button>
+</div>
+</div>
+<!-- Analysis Result -->
+<div class="w-full max-w-[600px] mt-4 hidden" id="analysis-result"></div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#061612] text-[#c8b882] font-serif text-sm tracking-wide w-full border-t border-[#c8b882]/10 flat no shadows flex flex-col md:flex-row justify-between items-center px-12 py-8 gap-4 relative z-30 stagger-5">
+<div class="text-lg font-bold text-[#c8b882]">
+            Quip
+        </div>
+<nav class="flex gap-6 items-center">
+<a class="text-stone-500 hover:text-[#c8b882] transition-colors" href="#">24/7 Help Chat</a>
+<a class="text-stone-500 hover:text-[#c8b882] transition-colors" href="#">Terms of Service</a>
+<a class="text-stone-500 hover:text-[#c8b882] transition-colors" href="#">Privacy Policy</a>
+</nav>
+<div class="text-stone-500">
+            © 2024 FinoLens Quip. All rights reserved.
+        </div>
+</footer>
+<script>
+// ── Quip News Feed ──────────────────────────────────────────────────────────
+const QUIP_API = 'http://localhost:8000';
+
+const GRADIENTS = [
+  'from-tertiary-container/30 to-primary-container/10',
+  'from-secondary-container/20 to-tertiary-container/20',
+  'from-outline/20 to-primary-container/20',
+  'from-primary-container/20 to-secondary-container/20',
+  'from-tertiary-container/20 to-outline/10',
+  'from-secondary-container/30 to-primary-container/20',
+];
+
+function esc(str) {
+  const d = document.createElement('div');
+  d.appendChild(document.createTextNode(str || ''));
+  return d.innerHTML;
+}
+
+function sentimentBadge(sentiment, score) {
+  const map = {
+    positive: { cls: 'text-emerald-600 bg-emerald-50 border-emerald-200', label: '▲ Positive' },
+    negative: { cls: 'text-red-500 bg-red-50 border-red-200',             label: '▼ Negative' },
+    neutral:  { cls: 'text-stone-400 bg-stone-50 border-stone-200',        label: '● Neutral'  },
+  };
+  const s = map[sentiment] || map.neutral;
+  const pct = score ? ` ${Math.round(score * 100)}%` : '';
+  return `<span class="font-label-caps text-label-caps border px-2 py-0.5 rounded-full text-[10px] ${s.cls}">${s.label}${pct}</span>`;
+}
+
+function renderCard(article, idx) {
+  const grad = GRADIENTS[idx % GRADIENTS.length];
+  const imageHtml = article.image_url
+    ? `<img alt="${esc(article.title)}" class="w-full h-full object-cover opacity-80 mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
+          src="${esc(article.image_url)}" onerror="this.style.display='none'">`
+    : '';
+  const tickers = (article.tickers || []).slice(0, 3)
+    .map(t => `<span class="text-[10px] font-mono bg-primary-container/20 text-on-primary-fixed px-1.5 py-0.5 rounded">${esc(t)}</span>`)
+    .join(' ');
+
+  return `
+<article
+  class="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col gap-4 border border-outline/10 relative overflow-hidden group cursor-pointer"
+  onclick="window.open('${esc(article.url)}', '_blank', 'noopener')">
+  <div class="w-full h-48 bg-gradient-to-br ${grad} rounded-DEFAULT mb-2 overflow-hidden">
+    ${imageHtml}
+  </div>
+  <div class="flex items-center justify-between flex-wrap gap-1">
+    <span class="font-label-caps text-label-caps text-primary-container">${esc(article.published_at_formatted)}</span>
+    ${sentimentBadge(article.sentiment, article.sentiment_score)}
+  </div>
+  <h2 class="font-headline-sm text-headline-sm text-[#1a2318] leading-snug line-clamp-2">${esc(article.title)}</h2>
+  <p class="font-body-md text-body-md text-outline-variant flex-grow line-clamp-3">${esc(article.description)}</p>
+  <div class="flex items-end justify-between mt-2">
+    <div class="w-12 h-1 bg-primary-container"></div>
+    <div class="flex items-center gap-1 flex-wrap justify-end">
+      ${tickers}
+      <span class="text-[10px] text-outline">${esc(article.source)}</span>
+    </div>
+  </div>
+</article>`;
+}
+
+function renderSkeleton() {
+  return Array.from({ length: 6 }, () => `
+<article class="bg-white rounded-lg p-6 border border-outline/10 flex flex-col gap-4 animate-pulse">
+  <div class="w-full h-48 bg-stone-100 rounded-DEFAULT mb-2"></div>
+  <div class="h-3 bg-stone-100 rounded w-1/3"></div>
+  <div class="h-5 bg-stone-100 rounded w-full"></div>
+  <div class="h-5 bg-stone-100 rounded w-4/5"></div>
+  <div class="h-3 bg-stone-100 rounded w-full"></div>
+  <div class="h-3 bg-stone-100 rounded w-3/4"></div>
+</article>`).join('');
+}
+
+async function loadNews(period = '24h', query = '') {
+  const grid = document.getElementById('news-grid');
+  grid.innerHTML = renderSkeleton();
+
+  try {
+    const params = new URLSearchParams({ period, query, limit: 6 });
+    const res = await fetch(`${QUIP_API}/news?${params}`, { signal: AbortSignal.timeout(12000) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    if (!data.articles || data.articles.length === 0) {
+      grid.innerHTML = `<div class="col-span-3 text-center text-outline py-16">No articles found.</div>`;
+      return;
+    }
+    grid.innerHTML = data.articles.map((a, i) => renderCard(a, i)).join('');
+  } catch (err) {
+    console.warn('Quip /news unavailable, showing fallback', err);
+    grid.innerHTML = getFallbackCards();
+  }
+}
+
+function getFallbackCards() {
+  const items = [
+    { date: 'MAY 01, 2025', title: 'Markets await Fed rate decision amid mixed economic signals', desc: 'Equity futures edged lower as investors positioned ahead of this week\'s FOMC meeting, with inflation data showing persistent stickiness in the services sector.' },
+    { date: 'APR 30, 2025', title: 'Tech earnings beat expectations as AI spending accelerates', desc: 'Mega-cap technology companies reported stronger-than-expected quarterly results, with capital expenditure guidance raised significantly on AI infrastructure buildout.' },
+    { date: 'APR 29, 2025', title: 'Energy sector rallies on supply disruption concerns', desc: 'Crude oil prices climbed following reports of unexpected production cuts, pushing energy stocks to multi-month highs and reshaping sector rotation dynamics.' },
+  ];
+  return items.map((item, i) => `
+<article class="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col gap-4 border border-outline/10 relative overflow-hidden group">
+  <div class="w-full h-48 bg-gradient-to-br ${GRADIENTS[i]} rounded-DEFAULT mb-2"></div>
+  <span class="font-label-caps text-label-caps text-primary-container">${item.date}</span>
+  <h2 class="font-headline-sm text-headline-sm text-[#1a2318] leading-snug">${item.title}</h2>
+  <p class="font-body-md text-body-md text-outline-variant flex-grow line-clamp-3">${item.desc}</p>
+  <div class="w-12 h-1 bg-primary-container mt-4"></div>
+</article>`).join('');
+}
+
+// ── Search & filter wiring ──────────────────────────────────────────────────
+let _searchTimer;
+
+// ── Greeting based on time of day ──────────────────────────────────────────
+function setGreeting() {
+  const hour = new Date().getHours();
+  let greeting, sub;
+  if (hour < 12) {
+    greeting = 'Good Morning';
+    sub = 'What would you like to analyse today?';
+  } else if (hour < 17) {
+    greeting = 'Good Afternoon';
+    sub = 'Markets are open. Let\'s dig in.';
+  } else {
+    greeting = 'Good Evening';
+    sub = 'Catching up on today\'s market moves?';
+  }
+  const h = document.getElementById('greeting-heading');
+  const p = document.getElementById('greeting-sub');
+  if (h) h.textContent = greeting;
+  if (p) p.textContent = sub;
+}
+
+// ── Ticker extraction ───────────────────────────────────────────────────────
+function extractTicker(text) {
+  // Matches: "analyze NVDA", "what about AAPL", "TSLA outlook", bare uppercase 1-5 chars
+  const explicit = text.match(/(?:analyze|analyse|what(?:'s| is| about)?|tell me about|thoughts on)\s+([A-Z]{1,5})\b/i);
+  if (explicit) return explicit[1].toUpperCase();
+  // Fallback: lone all-caps word 1–5 chars
+  const bare = text.match(/\b([A-Z]{2,5})\b/);
+  if (bare) return bare[1].toUpperCase();
+  return null;
+}
+
+// ── Signal colour helpers ───────────────────────────────────────────────────
+function signalColour(signal) {
+  if (!signal) return 'text-stone-400';
+  const s = signal.toUpperCase();
+  if (s === 'BUY')  return 'text-emerald-600';
+  if (s === 'SELL') return 'text-red-500';
+  return 'text-amber-500';
+}
+
+function sentimentColour(label) {
+  if (!label) return 'text-stone-400';
+  const l = label.toLowerCase();
+  if (l === 'positive') return 'text-emerald-600';
+  if (l === 'negative') return 'text-red-500';
+  return 'text-amber-500';
+}
+
+// ── Render analysis result ──────────────────────────────────────────────────
+function renderAnalysis(data) {
+  const box = document.getElementById('analysis-result');
+  if (!box) return;
+
+  if (data.error && !data.reasoning) {
+    box.className = box.className.replace('hidden', '') + ' ';
+    box.classList.remove('hidden');
+    box.innerHTML = `<div class="rounded-xl border border-red-500/30 bg-red-950/20 px-5 py-4 text-red-400 font-body-md text-body-md">${esc(data.error)}</div>`;
+    return;
+  }
+
+  const signalCls  = signalColour(data.signal);
+  const sentCls    = sentimentColour(data.sentiment_label);
+  const probPct    = data.probability != null ? `${data.probability}%` : '—';
+  const sentPct    = data.sentiment_score != null ? `${data.sentiment_score}%` : '—';
+  const signalTxt  = data.signal ? data.signal.toUpperCase() : '—';
+  const sentLbl    = data.sentiment_label ? data.sentiment_label.charAt(0).toUpperCase() + data.sentiment_label.slice(1) : '—';
+  const tickerBadge = data.ticker ? `<span class="font-mono bg-primary-container/20 text-on-primary-fixed px-2 py-0.5 rounded text-[11px] mr-2">${esc(data.ticker)}</span>` : '';
+
+  const conflictBanner = data.conflict_detected ? `
+  <div class="mt-3 flex items-center gap-2 rounded-lg border border-amber-500/40 bg-amber-950/20 px-4 py-2 text-amber-400 font-label-caps text-label-caps">
+    <span class="material-symbols-outlined text-[16px]">warning</span>
+    Conflicting signals detected — exercise caution
+  </div>` : '';
+
+  const errorNote = data.error ? `<p class="mt-2 text-amber-400 font-label-caps text-label-caps">${esc(data.error)}</p>` : '';
+
+  box.classList.remove('hidden');
+  box.innerHTML = `
+<div class="rounded-xl border border-outline/20 bg-surface-container-high/60 backdrop-blur-md px-5 py-5 flex flex-col gap-3 shadow-lg">
+  <div class="flex items-center gap-2 flex-wrap">
+    ${tickerBadge}
+    <span class="font-headline-sm text-headline-sm ${signalCls} font-bold">${signalTxt}</span>
+    <span class="text-on-surface-variant font-body-md text-body-md">${probPct}</span>
+  </div>
+  <p class="font-body-md text-body-md text-on-surface leading-relaxed">${esc(data.reasoning || '')}</p>
+  <div class="flex items-center gap-4 flex-wrap font-label-caps text-label-caps text-on-surface-variant border-t border-outline/10 pt-3">
+    <span>Sentiment: <span class="${sentCls} font-semibold">${sentLbl}</span></span>
+    <span>Confidence: <span class="text-on-surface font-semibold">${sentPct}</span></span>
+  </div>
+  ${conflictBanner}
+  ${errorNote}
+</div>`;
+}
+
+// ── Chat send handler ───────────────────────────────────────────────────────
+async function sendChat() {
+  const input  = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('chat-send');
+  const sendIcon = document.getElementById('chat-send-icon');
+  const resultBox = document.getElementById('analysis-result');
+  if (!input || !sendBtn) return;
+
+  const rawText = input.value.trim();
+  if (!rawText) return;
+
+  const ticker = extractTicker(rawText);
+
+  // Spinner on
+  sendBtn.disabled = true;
+  sendBtn.classList.add('opacity-60', 'cursor-not-allowed');
+  if (sendIcon) sendIcon.textContent = 'progress_activity';
+  if (resultBox) resultBox.classList.add('hidden');
+
+  try {
+    const payload = {
+      ticker: ticker || null,
+      query: rawText,
+      include_news: true,
+      include_fundamentals: true,
+    };
+    const res = await fetch(`${QUIP_API}/api/v1/analyze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(60000),
+    });
+    const data = await res.json();
+    renderAnalysis(data);
+  } catch (err) {
+    renderAnalysis({ error: `Request failed: ${err.message}` });
+  } finally {
+    // Spinner off
+    sendBtn.disabled = false;
+    sendBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+    if (sendIcon) sendIcon.textContent = 'arrow_upward';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setGreeting();
+  loadNews();
+
+  // Chat send on button click
+  const sendBtn = document.getElementById('chat-send');
+  if (sendBtn) sendBtn.addEventListener('click', sendChat);
+
+  // Chat send on Ctrl+Enter / Cmd+Enter
+  const input = document.getElementById('chat-input');
+  if (input) {
+    input.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        sendChat();
+      }
+    });
+  }
+
+  const searchInput = document.querySelector('input[placeholder*="Search markets"]');
+  const periodSelect = document.querySelector('select');
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      clearTimeout(_searchTimer);
+      _searchTimer = setTimeout(() => {
+        const period = periodSelect ? _periodValue(periodSelect.value) : '24h';
+        loadNews(period, e.target.value.trim());
+      }, 500);
+    });
+  }
+
+  if (periodSelect) {
+    periodSelect.addEventListener('change', (e) => {
+      const q = searchInput ? searchInput.value.trim() : '';
+      loadNews(_periodValue(e.target.value), q);
+    });
+  }
+});
+
+function _periodValue(label) {
+  const map = { 'Past 24 Hours': '24h', 'Past Week': 'week', 'Past Month': 'month' };
+  return map[label] || '24h';
+}
+</script>
+</body></html>

@@ -1,0 +1,9 @@
+backend/.env
+api_key.txt
+__pycache__/
+*.pyc
+backend/data/chroma/
+.DS_Store
+*.egg-info/
+venv/
+.venv/
